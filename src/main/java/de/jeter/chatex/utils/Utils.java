@@ -31,7 +31,7 @@ import java.util.List;
 public class Utils {
 
     public static String translateColorCodes(String string, Player p) {
-        return p.hasPermission("chatex.chat.color") ? replaceColors(string) : string;
+        return PermissionUtil.hasRestrictionBypass(p, "chatex.chat.color") ? replaceColors(string) : string;
     }
 
     public static String replaceColors(String message) {
@@ -98,7 +98,7 @@ public class Utils {
 
     public static void notifyOps(String msg) {
         for (Player op : ChatEx.getInstance().getServer().getOnlinePlayers()) {
-            if (!op.hasPermission("chatex.notifyad")) {
+            if (!PermissionUtil.has(op, "chatex.notifyad")) {
                 continue;
             }
             op.sendMessage(msg);

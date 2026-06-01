@@ -38,7 +38,7 @@ public class ChatEx extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
 
-        Config.load();
+        Config.ValidationResult validationResult = Config.load();
         Locales.load();
         PluginManager.load();
         ChatLogger.load();
@@ -59,6 +59,13 @@ public class ChatEx extends JavaPlugin {
             CustomCharts.addPermissionsPluginChart(metrics);
             CustomCharts.addUpdateCheckerChart(metrics);
             getLogger().info("Thanks for using bstats, it was enabled!");
+        }
+
+        if (validationResult.generatedNewConfig()) {
+            getLogger().warning("A new documented config template was generated. Your active config.yml was left unchanged.");
+        }
+        if (validationResult.hasWarnings()) {
+            getLogger().warning("ChatEx started with " + validationResult.warnings().size() + " configuration warning(s). Review the messages above.");
         }
 
         getLogger().info("Is now enabled!");

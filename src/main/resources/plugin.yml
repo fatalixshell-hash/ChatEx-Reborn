@@ -21,18 +21,27 @@ permissions:
   chatex.chat.color:
     description: Is needed to use color codes with & in chat
     default: false
+  chatex.mentions.use:
+    description: Allows mentioning players with @player when Mentions.RequirePermission is enabled
+    default: false
+  chatex.mentions.notify:
+    description: Allows receiving mention notifications when Mentions.Notify.RequirePermission is enabled
+    default: false
   chatex.antispam.bypass:
     description: Is needed to bypass the antispam system
-    default: false
+    default: op
   chatex.bypassads:
     description: Is needed to bypass the AdBlocker
-    default: false
+    default: op
+  chatex.blockedwords.bypass:
+    description: Is needed to bypass blocked words filtering
+    default: op
   chatex.notifyad:
     description: Is needed to be messaged when a player tries to advertise.
-    default: false
+    default: op
   chatex.notifyupdate:
     description: Is needed to get notiefied about new updates when you join
-    default: false
+    default: op
   chatex.clear:
     description: Is needed to use /chatex clear to clear the chat
     default: op

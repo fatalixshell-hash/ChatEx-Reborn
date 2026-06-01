@@ -42,7 +42,7 @@ public class AntiSpamManager {
     }
 
     public boolean isAllowed(Player chatter) {
-        if (!map.containsKey(chatter) || !Config.ANTISPAM_ENABLED.getBoolean() || chatter.hasPermission("chatex.antispam.bypass")) {
+        if (!map.containsKey(chatter) || !Config.ANTISPAM_ENABLED.getBoolean() || PermissionUtil.hasRestrictionBypass(chatter, "chatex.antispam.bypass")) {
             return true;
         }
 

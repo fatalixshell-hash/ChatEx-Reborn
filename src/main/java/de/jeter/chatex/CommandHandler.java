@@ -20,8 +20,10 @@ package de.jeter.chatex;
 
 import de.jeter.chatex.utils.Config;
 import de.jeter.chatex.utils.Locales;
+import de.jeter.chatex.utils.PermissionUtil;
 import de.jeter.chatex.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
@@ -40,23 +42,36 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             return true;
         } else {
             if (args[0].equalsIgnoreCase("reload")) {
-                if (sender.hasPermission("chatex.reload")) {
-                    Config.reload(true);
-                    sender.sendMessage(Locales.MESSAGES_RELOAD.getString(null));
+                if (PermissionUtil.canUseAdminCommand(sender, "chatex.reload")) {
+                    Config.ValidationResult validationResult = Config.reload(true);
+                    Locales.load();
+                    sender.sendMessage(ChatColor.GREEN + "ChatEx configuration and locale messages were reloaded.");
 
+                    int updatedTablistNames = 0;
                     if (Config.CHANGE_TABLIST_NAME.getBoolean()) {
                         for (Player p : Bukkit.getOnlinePlayers()) {
                             String name = Config.TABLIST_FORMAT.getString();
                             name = Utils.replacePlayerPlaceholders(p, name);
                             p.setPlayerListName(name);
+                            updatedTablistNames++;
                         }
+                    }
+
+                    sender.sendMessage(ChatColor.GRAY + "Updated tablist names: " + updatedTablistNames);
+                    if (validationResult.generatedNewConfig()) {
+                        sender.sendMessage(ChatColor.YELLOW + "Your config is older. A new template was generated beside config.yml.");
+                    }
+                    if (validationResult.hasWarnings()) {
+                        sender.sendMessage(ChatColor.YELLOW + "Config warnings: " + validationResult.warnings().size() + ". Check the server console for details.");
+                    } else {
+                        sender.sendMessage(ChatColor.GREEN + "No config warnings detected.");
                     }
                 } else {
                     sender.sendMessage(Locales.COMMAND_RESULT_NO_PERM.getString(null).replaceAll("%perm", "chatex.reload"));
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("clear")) {
-                if (sender.hasPermission("chatex.clear")) {
+                if (PermissionUtil.canUseAdminCommand(sender, "chatex.clear")) {
                     for (int i = 0; i < 50; i++) {
                         Bukkit.broadcastMessage("\n");
                     }
@@ -90,10 +105,10 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         List<String> possibleTabs = new ArrayList<>();
-        if (commandSender.hasPermission("chatex.clear")) {
+        if (PermissionUtil.canUseAdminCommand(commandSender, "chatex.clear")) {
             possibleTabs.add("clear");
         }
-        if (commandSender.hasPermission("chatex.reload")) {
+        if (PermissionUtil.canUseAdminCommand(commandSender, "chatex.reload")) {
             possibleTabs.add("reload");
         }
         return possibleTabs;

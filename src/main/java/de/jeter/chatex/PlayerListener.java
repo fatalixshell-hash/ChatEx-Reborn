@@ -20,6 +20,7 @@ package de.jeter.chatex;
 
 import de.jeter.chatex.utils.Config;
 import de.jeter.chatex.utils.Locales;
+import de.jeter.chatex.utils.PermissionUtil;
 import de.jeter.chatex.utils.Utils;
 import de.jeter.updatechecker.Result;
 import de.jeter.updatechecker.UpdateChecker;
@@ -57,7 +58,7 @@ public class PlayerListener implements Listener {
 
         UpdateChecker checker = ChatEx.getInstance().getUpdateChecker();
 
-        if (Config.CHECK_UPDATE.getBoolean() && e.getPlayer().hasPermission("chatex.notifyupdate") && checker != null) {
+        if (Config.CHECK_UPDATE.getBoolean() && PermissionUtil.has(e.getPlayer(), "chatex.notifyupdate") && checker != null) {
             if (checker.getResult() == Result.UPDATE_FOUND) {
                 try {
                     TextComponent msg = new TextComponent(Locales.UPDATE_FOUND.getString(null).replaceAll("%oldversion", ChatEx.getInstance().getDescription().getVersion()).replaceAll("%newversion", ChatEx.getInstance().getUpdateChecker().getLatestRemoteVersion()));

@@ -21,6 +21,7 @@ package de.jeter.chatex.utils.adManager;
 import de.jeter.chatex.utils.ChatLogger;
 import de.jeter.chatex.utils.Config;
 import de.jeter.chatex.utils.Locales;
+import de.jeter.chatex.utils.PermissionUtil;
 import de.jeter.chatex.utils.Utils;
 import org.bukkit.entity.Player;
 
@@ -84,7 +85,7 @@ public class SimpleAdManager implements AdManager {
 
     @Override
     public boolean checkForAds(String msg, Player p) {
-        if (p.hasPermission("chatex.bypassads")) {
+        if (PermissionUtil.hasRestrictionBypass(p, "chatex.bypassads")) {
             return false;
         }
         if (!Config.ADS_ENABLED.getBoolean()) {

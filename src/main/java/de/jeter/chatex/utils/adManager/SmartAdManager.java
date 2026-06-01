@@ -82,7 +82,7 @@ public class SmartAdManager implements AdManager {
 
     @Override
     public boolean checkForAds(String msg, Player p) {
-        if (p.hasPermission("chatex.bypassads")) {
+        if (PermissionUtil.hasRestrictionBypass(p, "chatex.bypassads")) {
             return false;
         }
         if (!Config.ADS_ENABLED.getBoolean()) {

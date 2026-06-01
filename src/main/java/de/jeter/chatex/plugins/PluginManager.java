@@ -40,11 +40,16 @@ public class PluginManager implements PermissionsPlugin {
             handler = new Vault();
         } else {
             handler = new Nothing();
+            ChatEx.getInstance().getLogger().warning("No LuckPerms or Vault chat provider was found.");
+            ChatEx.getInstance().getLogger().warning("ChatEx will still work, but %prefix, %suffix and %group will be empty/default.");
+            ChatEx.getInstance().getLogger().warning("Recommendation: install LuckPerms for modern prefix/suffix support, or Vault with a chat provider for legacy setups.");
         }
         ChatEx.getInstance().getLogger().info("Successfully hooked into: " + handler.getName());
 
         if (HookManager.checkPlaceholderAPI()) {
             ChatEx.getInstance().getLogger().info("Hooked into PlaceholderAPI");
+        } else {
+            ChatEx.getInstance().getLogger().info("PlaceholderAPI not found. ChatEx placeholders still work; external PlaceholderAPI placeholders will be skipped.");
         }
 
         if (Config.AFK_PLACEHOLDER.getBoolean()) {

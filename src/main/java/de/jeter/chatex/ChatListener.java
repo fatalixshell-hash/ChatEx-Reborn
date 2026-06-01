@@ -85,7 +85,7 @@ public class ChatListener implements Listener {
         LogHelper.debug("ChatEvent fired with priority: " + Config.PRIORITY.getString().toUpperCase() + ", ChatEx reacting to it...");
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("chatex.allowchat")) {
+        if (!PermissionUtil.hasRestrictionBypass(player, "chatex.allowchat")) {
             String msg = Locales.COMMAND_RESULT_NO_PERM.getString(player).replaceAll("%perm", "chatex.allowchat");
             player.sendMessage(msg);
             event.setCancelled(true);
@@ -129,30 +129,33 @@ public class ChatListener implements Listener {
 
         LogHelper.debug("Player did not activate the AdBlocker. Continuing...");
 
-        for(String block : Config.BLOCKED_WORDS.getStringList()) {
-            if(chatMessage.toLowerCase().contains(block.toLowerCase())) {
-                LogHelper.debug("Player activated wordblocker! ChatMessage: " + chatMessage + " contains blockedWord: " + block);
-                String message = Locales.MESSAGES_BLOCKED.getString(null);
-                MessageContainsBlockedWordEvent messageContainsBlockedWordEvent = new MessageContainsBlockedWordEvent(player, chatMessage, message);
-                Bukkit.getPluginManager().callEvent(messageContainsBlockedWordEvent);
-                event.setCancelled(!messageContainsBlockedWordEvent.isCancelled());
-                chatMessage = messageContainsBlockedWordEvent.getMessage();
-                if (!messageContainsBlockedWordEvent.isCancelled()) {
-                    event.getPlayer().sendMessage(messageContainsBlockedWordEvent.getPluginMessage());
-                    return;
+        if (!PermissionUtil.hasRestrictionBypass(player, "chatex.blockedwords.bypass")) {
+            for(String block : Config.BLOCKED_WORDS.getStringList()) {
+                if(chatMessage.toLowerCase().contains(block.toLowerCase())) {
+                    LogHelper.debug("Player activated wordblocker! ChatMessage: " + chatMessage + " contains blockedWord: " + block);
+                    String message = Locales.MESSAGES_BLOCKED.getString(null);
+                    MessageContainsBlockedWordEvent messageContainsBlockedWordEvent = new MessageContainsBlockedWordEvent(player, chatMessage, message);
+                    Bukkit.getPluginManager().callEvent(messageContainsBlockedWordEvent);
+                    event.setCancelled(!messageContainsBlockedWordEvent.isCancelled());
+                    chatMessage = messageContainsBlockedWordEvent.getMessage();
+                    if (!messageContainsBlockedWordEvent.isCancelled()) {
+                        event.getPlayer().sendMessage(messageContainsBlockedWordEvent.getPluginMessage());
+                        return;
+                    }
                 }
             }
         }
 
         LogHelper.debug("Player did not use a blocked word. Continuing...");
         LogHelper.debug("ChatMessage: " + chatMessage);
+        chatMessage = MentionManager.process(player, chatMessage);
         boolean global = false;
 
         if (Config.RANGEMODE.getBoolean() || Config.BUNGEECORD.getBoolean()) {
             LogHelper.debug("Message starts with prefix (" + Config.RANGEPREFIX.getString() + "): " + chatMessage.startsWith(Config.RANGEPREFIX.getString()));
             if ((Config.RANGEMODE.getBoolean() && chatMessage.startsWith(Config.RANGEPREFIX.getString())) || Config.BUNGEECORD.getBoolean()) {
                 LogHelper.debug("Global mode enabled!");
-                if (player.hasPermission("chatex.chat.global")) {
+                if (PermissionUtil.hasRestrictionBypass(player, "chatex.chat.global")) {
                     chatMessage = chatMessage.replaceFirst(Pattern.quote(Config.RANGEPREFIX.getString()), "");
                     format = PluginManager.getInstance().getGlobalMessageFormat(player);
                     global = true;
