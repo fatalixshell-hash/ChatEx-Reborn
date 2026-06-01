@@ -1,0 +1,30 @@
+# Build output
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+dependency-reduced-pom.xml
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+nb-configuration.xml
+
+# Local bundled tools
+apache-maven-3.9.9/
+jdk-21.0.11+10/
+work-tools/
+
+# Runtime and logs
+logs/
+*.log
+hs_err_pid*
+replay_pid*
+
+# OS files
+.DS_Store
+Thumbs.db
